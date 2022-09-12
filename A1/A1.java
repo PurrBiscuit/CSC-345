@@ -87,7 +87,7 @@ public class A1 {
          return;
       }
 
-      // set integer lexemes
+      // set integer lexemes and concatenate integer/float lexemes
       if (Character.isDigit(c)) {
          if (lexeme.equals(defaultLexeme)) lexemeType = INUM;
          lexeme += c;
@@ -98,12 +98,12 @@ public class A1 {
 
       // set floating lexemes
       if (c == '.' && Character.isDigit(lastChar)) {
-         // throw error if the lexeme already contains a decimal
-         if (lexeme.contains("."))
-            throw new UnknownLexemeException("Floating lexeme already contains a decimal.");
-
          lexemeType = FNUM;
          lexeme += c;
+
+         if (!isNextCharacterDigit(line, index))
+            throw new UnknownLexemeException("Floating number lexeme needs to contain at least one digit after decimal.");
+
          return;
       }
 
@@ -126,6 +126,18 @@ public class A1 {
       }
    }
 
+   // determines if the next character is a digit or not
+   private static boolean isNextCharacterDigit(String line, int index) {
+      try {
+         char nextChar = line.charAt(index + 1);
+
+         return Character.isDigit(nextChar);
+      // end of the string indicates that there is no next character
+      } catch (StringIndexOutOfBoundsException e) {
+         return false;
+      }
+   }
+
    // analyze each character from a single line of text from the input file
    private static void parseLine(String line) {
       int lineLength = line.length();
@@ -145,7 +157,7 @@ public class A1 {
                lexeme = defaultLexeme;
             }
          } catch (UnknownLexemeException error) {
-            // print any lexeme characters leftover before exception encountered
+            // print any lexeme characters leftover before exception occurred
             if (!lexeme.isEmpty()) printLexeme();
             unknownLexemeEncountered = true;
             break;
