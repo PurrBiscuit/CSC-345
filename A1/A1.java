@@ -106,7 +106,7 @@ public class A1 {
 
       // throw a new UnknownLexemeException
       // if no conditions above were matched
-      throw new UnknownLexemeException("");
+      throw new UnknownLexemeException("Unknown lexeme encountered.");
    }
 
    private static boolean isDigitLexemeComplete(String line, int index) {
