@@ -38,7 +38,7 @@ public class A1 {
    // global variables for use throughout analyzer
    private static char lastChar;
    private static String lexeme = defaultLexeme;
-   private static boolean lexemeComplete = defaultLexemeComplete;
+   private static boolean isLexemeComplete = defaultLexemeComplete;
    private static int lexemeType;
    private static boolean unknownLexemeEncountered = false;
    private static HashMap<Character, Integer> reservedLexemes = new HashMap<Character, Integer>();
@@ -74,13 +74,16 @@ public class A1 {
 	}
 	
 	// Students -- Add your method declarations here
+
+   // analyzes each character and puts together the
+   // appropriate lexemes based on the incoming characters
    private static void analyzeCharacter(char c, String line, int index)
       throws UnknownLexemeException {
       // set all the reserved and id lexemes
       if (reservedLexemes.containsKey(c) || Character.isLowerCase(c)) {
          lexemeType = reservedLexemes.getOrDefault(c, ID);
          lexeme = Character.toString(c);
-         lexemeComplete = true;
+         isLexemeComplete = true;
          return;
       }
 
@@ -88,7 +91,7 @@ public class A1 {
       if (Character.isDigit(c)) {
          if (lexeme.equals(defaultLexeme)) lexemeType = INUM;
          lexeme += c;
-         lexemeComplete = isDigitLexemeComplete(line, index);
+         isLexemeComplete = isDigitLexemeComplete(line, index);
 
          return;
       }
@@ -109,6 +112,7 @@ public class A1 {
       throw new UnknownLexemeException("Unknown lexeme encountered.");
    }
 
+   // determines if the digit lexeme is complete or not
    private static boolean isDigitLexemeComplete(String line, int index) {
       try {
          char nextChar = line.charAt(index + 1);
@@ -122,6 +126,7 @@ public class A1 {
       }
    }
 
+   // analyze each character from a single line of text from the input file
    private static void parseLine(String line) {
       int lineLength = line.length();
 
@@ -134,9 +139,9 @@ public class A1 {
 
             // set the lexeme values back to defaults and print result
             // if previous lexeme was successfully processed.
-            if (lexemeComplete) {
+            if (isLexemeComplete) {
                printLexeme();
-               lexemeComplete = defaultLexemeComplete;
+               isLexemeComplete = defaultLexemeComplete;
                lexeme = defaultLexeme;
             }
          } catch (UnknownLexemeException error) {
@@ -148,6 +153,7 @@ public class A1 {
       }
    }
 
+   // print the lexeme and lexeme type out to the console
    private static void printLexeme() {
       System.out.println("Next token is: " + lexemeType + ", Next lexeme is " + lexeme);
    }
