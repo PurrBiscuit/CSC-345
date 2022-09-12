@@ -76,9 +76,6 @@ public class A1 {
 	// Students -- Add your method declarations here
    private static void analyzeCharacter(char c, String line, int index)
       throws UnknownLexemeException {
-      // return immediately if character is whitespace
-      if (Character.isWhitespace(c)) return;
-
       // set all the reserved and id lexemes
       if (reservedLexemes.containsKey(c) || Character.isLowerCase(c)) {
          lexemeType = reservedLexemes.getOrDefault(c, ID);
@@ -89,11 +86,9 @@ public class A1 {
 
       // set integer lexemes
       if (Character.isDigit(c)) {
-         if (lexemeType != FNUM) lexemeType = INUM;
+         if (lexeme.equals(defaultLexeme)) lexemeType = INUM;
          lexeme += c;
-
-         if (isDigitLexemeComplete(line, index))
-            lexemeComplete = true;
+         lexemeComplete = isDigitLexemeComplete(line, index);
 
          return;
       }
@@ -101,10 +96,8 @@ public class A1 {
       // set floating lexemes
       if (c == '.' && Character.isDigit(lastChar)) {
          // throw error if the lexeme already contains a decimal
-         if (lexeme.contains(".")) {
-            lexemeComplete = true;
+         if (lexeme.contains("."))
             throw new UnknownLexemeException("Floating lexeme already contains a decimal.");
-         }
 
          lexemeType = FNUM;
          lexeme += c;
@@ -119,7 +112,9 @@ public class A1 {
    private static boolean isDigitLexemeComplete(String line, int index) {
       try {
          char nextChar = line.charAt(index + 1);
-         // if next char isn't a digit or . then the digit is complete
+
+         // if the next char is a digit or .
+         // then the digit is incomplete
          return !Character.isDigit(nextChar) && nextChar != '.';
       // end of the string indicates digit is complete
       } catch (StringIndexOutOfBoundsException e) {
@@ -133,22 +128,23 @@ public class A1 {
       for (int i = 0; i < lineLength; i++) {
          try {
             char c = line.charAt(i);
+            if (Character.isWhitespace(c)) continue;
             analyzeCharacter(c, line, i);
             lastChar = c;
+
+            // set the lexeme values back to defaults and print result
+            // if previous lexeme was successfully processed.
+            if (lexemeComplete) {
+               printLexeme();
+               lexemeComplete = defaultLexemeComplete;
+               lexeme = defaultLexeme;
+            }
          } catch (UnknownLexemeException error) {
+            // print any lexeme characters leftover before exception encountered
+            if (!lexeme.isEmpty()) printLexeme();
             unknownLexemeEncountered = true;
+            break;
          }
-
-         // set the lexeme values back to defaults and print result
-         // if previous lexeme was successfully processed.
-         if (lexemeComplete) {
-            printLexeme();
-            lexemeComplete = defaultLexemeComplete;
-            lexeme = defaultLexeme;
-         }
-
-         // break out of for loop if unknownLexemeEncountered is true
-         if (unknownLexemeEncountered) break;
       }
    }
 
