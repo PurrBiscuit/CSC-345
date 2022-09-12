@@ -12,18 +12,18 @@ import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 // Students -- Add your import declarations here
+import java.util.HashMap;
+
+class UnknownLexemeException extends Exception {
+   public UnknownLexemeException(String message) {
+      super(message);
+   }
+}
 
 public class A1 {
-   // set some reusable defaults
-   private static String defaultLexeme = "";
-   private static boolean defaultLexemeComplete = false;
-
-   // global variables for use throughout analyzer
-   private static String lexeme = defaultLexeme;
-   private static boolean lexemeComplete = defaultLexemeComplete;
-   private static int lexemeType;
-
 	// Students -- Add your constants here
+   private static final String defaultLexeme = "";
+   private static final boolean defaultLexemeComplete = false;
    private static final int
       FLOATDCL = 0,
       INTDCL = 1,
@@ -33,8 +33,15 @@ public class A1 {
       PLUS = 5,
       MINUS = 6,
       INUM = 7,
-      FNUM = 8,
-      UNKNOWN = -1;
+      FNUM = 8;
+
+   // global variables for use throughout analyzer
+   private static char lastChar;
+   private static String lexeme = defaultLexeme;
+   private static boolean lexemeComplete = defaultLexemeComplete;
+   private static int lexemeType;
+   private static boolean unknownLexemeEncountered = false;
+   private static HashMap<Character, Integer> reservedLexemes = new HashMap<Character, Integer>();
 
 	public static void main(String[] args) {
 		try {
@@ -49,12 +56,17 @@ public class A1 {
 			// hasNextDouble and nextDouble for this assignment.  
 			
 			// Students -- Your code and methods calls go here
-			while (sc.hasNextLine()) {
+         reservedLexemes.put('f', FLOATDCL);
+         reservedLexemes.put('i', INTDCL);
+         reservedLexemes.put('p', PRINT);
+         reservedLexemes.put('=', ASSIGN);
+         reservedLexemes.put('+', PLUS);
+         reservedLexemes.put('-', MINUS);
+
+			while (sc.hasNextLine() && !unknownLexemeEncountered) {
             parseLine(sc.nextLine());
          };
-			
-			
-			
+
 			sc.close();
 		} catch (FileNotFoundException e) {
 			System.out.println("ERROR - cannot open front.in \n");
@@ -62,30 +74,84 @@ public class A1 {
 	}
 	
 	// Students -- Add your method declarations here
-   private static void analyzeCharacter(char c) {
+   private static void analyzeCharacter(char c, String line, int index)
+      throws UnknownLexemeException {
+      // return immediately if character is whitespace
+      if (Character.isWhitespace(c)) return;
 
+      // set all the reserved and id lexemes
+      if (reservedLexemes.containsKey(c) || Character.isLowerCase(c)) {
+         lexemeType = reservedLexemes.getOrDefault(c, ID);
+         lexeme = Character.toString(c);
+         lexemeComplete = true;
+         return;
+      }
+
+      // set integer lexemes
+      if (Character.isDigit(c)) {
+         if (lexemeType != FNUM) lexemeType = INUM;
+         lexeme += c;
+
+         if (isDigitLexemeComplete(line, index))
+            lexemeComplete = true;
+
+         return;
+      }
+
+      // set floating lexemes
+      if (c == '.' && Character.isDigit(lastChar)) {
+         // throw error if the lexeme already contains a decimal
+         if (lexeme.contains(".")) {
+            lexemeComplete = true;
+            throw new UnknownLexemeException("Floating lexeme already contains a decimal.");
+         }
+
+         lexemeType = FNUM;
+         lexeme += c;
+         return;
+      }
+
+      // throw a new UnknownLexemeException
+      // if no conditions above were matched
+      throw new UnknownLexemeException("");
+   }
+
+   private static boolean isDigitLexemeComplete(String line, int index) {
+      try {
+         char nextChar = line.charAt(index + 1);
+         // if next char isn't a digit or . then the digit is complete
+         return !Character.isDigit(nextChar) && nextChar != '.';
+      // end of the string indicates digit is complete
+      } catch (StringIndexOutOfBoundsException e) {
+         return true;
+      }
    }
 
    private static void parseLine(String line) {
-      System.out.println("next line is ->" + line);
-      System.out.println("line length is ->" + line.length());
-      
       int lineLength = line.length();
-      
-      for (int i = 0; i < line.length(); i++) {
-         // set the lexeme values back to defaults
-         // if previous lexeme was successfully processed.
-         if (lexemeComplete) {
-            lexemeComplete = defaultLexemeComplete;
-            String lexeme = defaultLexeme;
+
+      for (int i = 0; i < lineLength; i++) {
+         try {
+            char c = line.charAt(i);
+            analyzeCharacter(c, line, i);
+            lastChar = c;
+         } catch (UnknownLexemeException error) {
+            unknownLexemeEncountered = true;
          }
 
-         analyzeCharacter(line.charAt(i));
+         // set the lexeme values back to defaults and print result
+         // if previous lexeme was successfully processed.
+         if (lexemeComplete) {
+            printLexeme();
+            lexemeComplete = defaultLexemeComplete;
+            lexeme = defaultLexeme;
+         }
 
-         if (lexemeComplete) printLexeme();
+         // break out of for loop if unknownLexemeEncountered is true
+         if (unknownLexemeEncountered) break;
       }
    }
-   
+
    private static void printLexeme() {
       System.out.println("Next token is: " + lexemeType + ", Next lexeme is " + lexeme);
    }
