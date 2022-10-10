@@ -1,8 +1,8 @@
 /**
  * CSC 345-01 Assignment #2
  * 
- * On my honor, <Your Full Name>, this assignment is my own work.  
- * I, <Your Full Name>, will follow the instructor's rules and processes 
+ * On my honor, Steve Purr, this assignment is my own work.  
+ * I, Steve Purr, will follow the instructor's rules and processes 
  * related to academic integrity as directed in the course syllabus.
  *
  */
