@@ -92,7 +92,12 @@ public class A2 {
 
   private static void expr() {
     System.out.println("Enter <Expr>");
-    System.out.println("Exit <Expr>");
+
+    getLexeme();
+    val();
+    while (nextToken == PLUS || nextToken == MINUS) expr();
+
+    System.out.println("Leave <Expr>");
   }
 
   private static void getChar() {
@@ -148,7 +153,8 @@ public class A2 {
 
     getLexeme();
     getLexeme();
-    val();
+    if (nextToken == ID || nextToken == INUM || nextToken == FNUM) val();
+    if (nextToken == PLUS || nextToken == MINUS) expr();
 
     System.out.println("Leave <Stmt>");
   }
