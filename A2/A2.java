@@ -59,6 +59,7 @@ public class A2 {
 
       getChar();
       getLexeme();
+      prog();
 
       sc.close();
     } catch (FileNotFoundException e) {
@@ -69,6 +70,21 @@ public class A2 {
   // Students -- Add your method declarations here
   private static void addChar() {
     lexeme+=nextChar;
+  }
+
+  private static void dcl() {
+    System.out.println("Enter <Dcl>");
+    System.out.println("Exit <Dcl>");
+  }
+
+  private static void dcls() {
+    System.out.println("Enter <Dcls>");
+    System.out.println("Exit <Dcls>");
+  }
+
+  private static void expr() {
+    System.out.println("Enter <Expr>");
+    System.out.println("Exit <Expr>");
   }
 
   private static void getChar() {
@@ -107,9 +123,33 @@ public class A2 {
     System.out.println("Next token is: " + nextToken + ", Next lexeme is " + lexeme);
   }
 
+  private static void prog() {
+    System.out.println("Enter <Prog>");
+
+    dcls();
+    stmts();
+
+    System.out.println("Exit <Prog>");
+  }
+
+  private static void stmt() {
+    System.out.println("Enter <Stmt>");
+    System.out.println("Exit <Stmt>");
+  }
+
+  private static void stmts() {
+    System.out.println("Enter <Stmts>");
+    System.out.println("Exit <Stmts>");
+  }
+
   private static void skipWhitespace() {
     while (Character.isWhitespace(nextChar)) {
       getChar();
     }
+  }
+
+  private static void val() {
+    System.out.println("Enter <Val>");
+    System.out.println("Exit <Val>");
   }
 }
