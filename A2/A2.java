@@ -146,11 +146,19 @@ public class A2 {
   private static void stmt() {
     System.out.println("Enter <Stmt>");
 
-    System.out.println("Exit <Stmt>");
+    getLexeme();
+    getLexeme();
+    val();
+
+    System.out.println("Leave <Stmt>");
   }
 
   private static void stmts() {
     System.out.println("Enter <Stmts>");
+
+    stmt();
+    while (nextToken == ID || nextToken == PRINT) stmts();
+
     System.out.println("Exit <Stmts>");
   }
 
@@ -162,6 +170,9 @@ public class A2 {
 
   private static void val() {
     System.out.println("Enter <Val>");
-    System.out.println("Exit <Val>");
+
+    getLexeme();
+
+    System.out.println("Leave <Val>");
   }
 }
