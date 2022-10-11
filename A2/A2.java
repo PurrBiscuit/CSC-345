@@ -74,11 +74,19 @@ public class A2 {
 
   private static void dcl() {
     System.out.println("Enter <Dcl>");
+
+    getLexeme();
+    getLexeme();
+
     System.out.println("Exit <Dcl>");
   }
 
   private static void dcls() {
     System.out.println("Enter <Dcls>");
+
+    dcl();
+    while (nextToken == FLOATDCL || nextToken == INTDCL) dcls();
+
     System.out.println("Exit <Dcls>");
   }
 
@@ -113,6 +121,9 @@ public class A2 {
 
         nextToken = lexeme.contains(".") ? FNUM : INUM;
         break;
+      case EOF:
+        nextToken = EOF;
+        break;
       default:
         nextToken = reservedLexemes.getOrDefault(nextChar, ID);
         lexeme = Character.toString(nextChar);
@@ -120,20 +131,21 @@ public class A2 {
         break;
     }
 
-    System.out.println("Next token is: " + nextToken + ", Next lexeme is " + lexeme);
+    if (!lexeme.isEmpty()) System.out.println("Next token is: " + nextToken + ", Next lexeme is " + lexeme);
   }
 
   private static void prog() {
     System.out.println("Enter <Prog>");
 
-    dcls();
-    stmts();
+    if (nextToken == FLOATDCL || nextToken == INTDCL) dcls();
+    if (nextToken == ID || nextToken == PRINT) stmts();
 
     System.out.println("Exit <Prog>");
   }
 
   private static void stmt() {
     System.out.println("Enter <Stmt>");
+
     System.out.println("Exit <Stmt>");
   }
 
