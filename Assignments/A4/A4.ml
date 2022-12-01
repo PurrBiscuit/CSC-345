@@ -70,7 +70,9 @@ let rec sum : int -> int = fun n ->
       Hint:    if n's binary representation is 10010101011
             (n / 2)'s binary representation is 1001010101
             (N % 2)'s binary representation is           1 *)	  
-let rec getBinary : int -> int = fun n -> n;;
+let rec getBinary : int -> int = fun n ->
+  if (n = 0) then 0
+  else (n mod 2) + 10 * getBinary(n / 2);;
 
 
 
