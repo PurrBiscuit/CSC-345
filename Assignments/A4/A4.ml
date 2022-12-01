@@ -15,13 +15,21 @@
 
 (* 1. Write a function harmonic that uses recursion to compute n-th harmonic number.  Read:  https://en.wikipedia.org/wiki/Harmonic_number
       For example, harmonic 2;; returns 1.5 *)
-let rec harmonic : int -> float = fun n -> (* FILL IN HERE *);;
+let rec harmonic : int -> float = fun n ->
+  if (n = 1) then 1.0
+  else (1.0 /. float_of_int n) +. harmonic (n - 1);;
 
 
 
 (* 2. Write a function howManyAboveAverage that returns how many of three integer inputs are above its average value.  
       For example, howManyAboveAverage 1 3 3;; returns 2 *)
-let howManyAboveAverage : int -> int -> int -> int = fun x y z -> (* FILL IN HERE *);;
+let howManyAboveAverage : int -> int -> int -> int = fun x y z ->
+  let avg = (x + y + z) / 3 in 
+    if (x > avg && y > avg) then 2
+    else if (x > avg && z > avg) then 2
+    else if (y > avg && z > avg) then 2
+    else if (x > avg || y > avg || z > avg) then 1
+    else 0;;
 
 
 
