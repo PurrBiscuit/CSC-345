@@ -46,8 +46,31 @@ let rec remove_first a l =
   else if ((List.hd l) = a) then List.tl l
   else (List.hd l)::(remove_first a (List.tl l));;
 
+(** 11. Write a recursive function that finds n-th element from a list. *)
+let rec nth l n =
+  if (l = []) then -1
+  else if (n = 0) then List.hd l
+  else nth (List.tl l) (n - 1);;
+
+
 (** 12. Write a recursive function that inserts an element to a sorted list. *)
 let rec insert a l =
   if (l = []) then [a]
   else if ((List.hd l) >= a) then a::l
   else (List.hd l)::(insert a (List.tl l));;
+
+(** 13. Write a recursive function that drops the first n elements from a list. *)
+let rec drop l n =
+  if (n = 0) then l
+  else drop (List.tl l) (n - 1);;
+
+(** 14. Write a recursive function that adds 1 to every element in a list. *)
+let rec inc_all l =
+  if (l = []) then []
+  else ((List.hd l) + 1)::inc_all(List.tl l);;
+
+(** 15. Write a recursive function that filters out even numbers from a list. *)
+let rec even l =
+  if (l = []) then []
+  else if (List.hd l mod 2 = 0) then even(List.tl l)
+  else (List.hd l)::even(List.tl l);;
